@@ -56,9 +56,9 @@ const putCat = async (req, res) => {
     res.status(200);
     res.json({message: 'Cat item updated.', result});
   } else {
-    const newId = addCat(req.body);
+    const result = addCat(req.body);
     res.status(201);
-    res.json({message: 'New cat added.', newId});
+    res.json({message: 'New cat added.', result});
   }
 };
 
