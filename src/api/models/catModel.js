@@ -25,17 +25,17 @@ const findCatById = (id) => {
   return cats.find((cat) => cat.id == id);
 };
 
-const addCat = (newCat) => {
-  const {name, birthdate, weight, owner, image} = newCat;
+const addCat = (newCat, imagePath) => {
+  const {name, birthdate, weight, owner} = newCat;
   const newId = cats[0].id + 1;
-  cats.unshift({id: newId, name, birthdate, weight, owner, image});
+  cats.unshift({id: newId, name, birthdate, weight, owner, image: imagePath});
   return {id: newId};
 };
 
-const replaceCat = (id, newCat) => {
-  const {name, birthdate, weight, owner, image} = newCat;
+const replaceCat = (id, newCat, imagePath) => {
+  const {name, birthdate, weight, owner} = newCat;
   const index = cats.indexOf(cats.find((cat) => cat.id == id));
-  cats[index] = {id: id, name, birthdate, weight, owner, image};
+  cats[index] = {id: id, name, birthdate, weight, owner, image: imagePath};
   return {id: id};
 };
 
