@@ -6,14 +6,14 @@ import {
   removeCat,
 } from '../models/catModel.js';
 
-const getCats = (req, res) => {
+const getCats = async (req, res) => {
   console.log('GET all cats.');
-  res.json(listAllCats());
+  res.json(await listAllCats());
 };
 
-const getCatById = (req, res) => {
+const getCatById = async (req, res) => {
   console.log('GET cat by id.');
-  const cat = findCatById(req.params.id);
+  const cat = await findCatById(req.params.id);
   if (cat) {
     res.json(cat);
   } else {
@@ -21,15 +21,23 @@ const getCatById = (req, res) => {
   }
 };
 
-const postCat = (req, res) => {
+const postCat = async (req, res) => {
   console.log('POST cat.');
 
   console.log('Request form data: ', req.body);
   console.log('Request image metadata: ', req.file);
 
   const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
-  const result = addCat(req.body, filePath);
-  if (result.id) {
+  const {cat_name, weight, owner, birthdate} = req.body;
+  const result = await addCat({
+    cat_name: cat_name,
+    weight: weight,
+    owner: owner,
+    filename: filePath,
+    birthdate: birthdate,
+  });
+
+  if (result) {
     res.status(201);
     res.json({message: 'New cat added.', result});
   } else {
@@ -37,14 +45,16 @@ const postCat = (req, res) => {
   }
 };
 
-const putCat = (req, res) => {
+const putCat = async (req, res) => {
   console.log('PUT cat.');
-  const cat = findCatById(req.params.id);
-  if (cat.id) {
+  if (req.file) {
     const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
-    const id = replaceCat(cat.id, req.body, filePath);
+    req.body.filename = filePath;
+  }
+  const result = await replaceCat(req.params.id, req.body);
+  if (result) {
     res.status(200);
-    res.json({message: 'Cat item updated.', id});
+    res.json({message: 'Cat item updated.', result});
   } else {
     const newId = addCat(req.body);
     res.status(201);
@@ -52,13 +62,12 @@ const putCat = (req, res) => {
   }
 };
 
-const deleteCat = (req, res) => {
+const deleteCat = async (req, res) => {
   console.log('DELETE cat.');
-  const cat = findCatById(req.params.id);
-  if (cat.id) {
-    const removedCat = removeCat(cat.id);
+  const result = await removeCat(req.params.id);
+  if (result) {
     res.status(200);
-    res.json({message: 'Cat item deleted.', removedCat});
+    res.json({message: 'Cat item deleted.', result});
   } else {
     res.sendStatus(404);
   }

@@ -29,6 +29,10 @@ catRouter
   .route('/')
   .get(getCats)
   .post(upload.single('photo'), createThumbnail, postCat);
-catRouter.route('/:id').get(getCatById).put(putCat).delete(deleteCat);
+catRouter
+  .route('/:id')
+  .get(getCatById)
+  .put(upload.single('photo'), createThumbnail, putCat)
+  .delete(deleteCat);
 
 export default catRouter;
