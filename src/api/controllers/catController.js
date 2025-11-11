@@ -23,7 +23,12 @@ const getCatById = (req, res) => {
 
 const postCat = (req, res) => {
   console.log('POST cat.');
-  const result = addCat(req.body);
+
+  console.log('Request form data: ', req.body);
+  console.log('Request image metadata: ', req.file);
+
+  const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
+  const result = addCat(req.body, filePath);
   if (result.id) {
     res.status(201);
     res.json({message: 'New cat added.', result});
@@ -36,7 +41,8 @@ const putCat = (req, res) => {
   console.log('PUT cat.');
   const cat = findCatById(req.params.id);
   if (cat.id) {
-    const id = replaceCat(cat.id, req.body);
+    const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
+    const id = replaceCat(cat.id, req.body, filePath);
     res.status(200);
     res.json({message: 'Cat item updated.', id});
   } else {
