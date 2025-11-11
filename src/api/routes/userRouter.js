@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import {
   getUsers,
   getUserById,
@@ -9,7 +10,13 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.route('/').get(getUsers).post(postUser);
-userRouter.route('/:id').get(getUserById).put(putUser).delete(deleteUser);
+const upload = multer({dest: '/uploads'});
+
+userRouter.route('/').get(getUsers).post(upload.none(), postUser);
+userRouter
+  .route('/:id')
+  .get(getUserById)
+  .put(upload.none(), putUser)
+  .delete(deleteUser);
 
 export default userRouter;

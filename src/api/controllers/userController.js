@@ -6,14 +6,14 @@ import {
   removeUser,
 } from '../models/userModel.js';
 
-const getUsers = (req, res) => {
+const getUsers = async (req, res) => {
   console.log('GET all users.');
-  res.json(listAllUsers());
+  res.json(await listAllUsers());
 };
 
-const getUserById = (req, res) => {
+const getUserById = async (req, res) => {
   console.log('GET user by id.');
-  const user = findUserById(req.params.id);
+  const user = await findUserById(req.params.id);
   if (user) {
     res.json(user);
   } else {
@@ -21,10 +21,10 @@ const getUserById = (req, res) => {
   }
 };
 
-const postUser = (req, res) => {
-  console.log('POST user.');
-  const result = addUser(req.body);
-  if (result.id) {
+const postUser = async (req, res) => {
+  console.log('POST user.', req.body);
+  const result = await addUser(req.body);
+  if (result) {
     res.status(201);
     res.json({message: 'New user added.', result});
   } else {
@@ -32,27 +32,25 @@ const postUser = (req, res) => {
   }
 };
 
-const putUser = (req, res) => {
+const putUser = async (req, res) => {
   console.log('PUT user.');
-  const user = findUserById(req.params.id);
-  if (user.id) {
-    const id = replaceUser(user.id, req.body);
+  const result = await replaceUser(req.params.id, req.body);
+  if (result) {
     res.status(200);
-    res.json({message: 'User item updated.', id});
+    res.json({message: 'User item updated.', result});
   } else {
-    const newId = addUser(req.body);
+    const result = await addUser(req.body);
     res.status(201);
-    res.json({message: 'New user added.', newId});
+    res.json({message: 'New user added.', result});
   }
 };
 
-const deleteUser = (req, res) => {
-  console.log('DELETE user.');
-  const user = findUserById(req.params.id);
-  if (user.id) {
-    const removedUser = removeUser(user.id);
+const deleteUser = async (req, res) => {
+  console.log('DELETE user');
+  const result = await removeUser(req.params.id);
+  if (result) {
     res.status(200);
-    res.json({message: 'User item deleted.', removedUser});
+    res.json({message: 'User item deleted.', result});
   } else {
     res.sendStatus(404);
   }
