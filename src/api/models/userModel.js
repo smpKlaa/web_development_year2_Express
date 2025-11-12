@@ -116,26 +116,22 @@ const removeUser = async (id) => {
 
   try {
     await connection.beginTransaction();
-    const [cResult] = await connection.execute(
-      'DELETE FROM wsk_cats WHERE owner = ?;',
-      [id]
-    );
+    await connection.execute('DELETE FROM wsk_cats WHERE owner = ?;', [id]);
     const [uResult] = await connection.execute(
       'DELETE FROM wsk_users WHERE user_id = ?;',
       [id]
     );
 
-    if (cResult.affectedRows === 0 || uResult.affectedRows === 0) {
-      return {
-        message: 'User not deleted',
-      };
+    if (uResult.affectedRows === 0) {
+      await connection.rollback();
+      return false;
     }
     await connection.commit();
     return {message: 'User deleted'};
   } catch (error) {
     await connection.rollback();
     console.error('error', error.message);
-    return {message: error.message};
+    return false;
   } finally {
     connection.release();
   }

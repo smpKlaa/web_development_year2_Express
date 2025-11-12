@@ -1,5 +1,5 @@
 import express from 'express';
-import multer from 'multer';
+// import multer from 'multer';
 import {
   getUsers,
   getUserById,
@@ -7,16 +7,18 @@ import {
   putUser,
   deleteUser,
 } from '../controllers/userController.js';
+import {authorizeUser} from '../../middlewares/authorizeUser.js';
+import {authenticateToken} from '../../middlewares/authentication.js';
 
 const userRouter = express.Router();
 
-const upload = multer({dest: '/uploads'});
+// const upload = multer({dest: '/uploads'});
 
-userRouter.route('/').get(getUsers).post(upload.none(), postUser);
+userRouter.route('/').get(getUsers).post(postUser);
 userRouter
   .route('/:id')
   .get(getUserById)
-  .put(upload.none(), putUser)
-  .delete(deleteUser);
+  .put(authenticateToken, authorizeUser, putUser)
+  .delete(authenticateToken, authorizeUser, deleteUser);
 
 export default userRouter;
