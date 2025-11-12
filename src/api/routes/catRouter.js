@@ -11,7 +11,7 @@ import {
   getCatByOwnerId,
 } from '../controllers/catController.js';
 import {authenticateToken} from '../../middlewares/authentication.js';
-import {authorizeCatOwner} from '../../middlewares/autorizeCatOwner.js';
+import {authorizeCatOwner} from '../../middlewares/authorizeCatOwner.js';
 
 const catRouter = express.Router();
 
