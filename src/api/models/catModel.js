@@ -1,4 +1,6 @@
 import promisePool from '../../utils/database.js';
+import fs from 'fs';
+import path from 'path';
 
 // const cats = [
 //   {
@@ -109,11 +111,40 @@ const replaceCat = async (id, newCat) => {
 };
 
 const removeCat = async (id) => {
+  const [[{filename}]] = await promisePool.execute(
+    'SELECT filename FROM wsk_cats WHERE cat_id = ?',
+    [id]
+  );
+
+  // Remove image of cat
+  try {
+    const ext = path.extname(filename);
+    const name = path.basename(filename, ext);
+
+    const thumbnailname = `${name}_thumb.jpeg`;
+
+    console.log(filename, thumbnailname);
+
+    fs.unlinkSync(`uploads/${filename}`);
+    fs.unlinkSync(`uploads/${thumbnailname}`);
+
+    console.log('File deleted:', filename);
+    console.log('File deleted:', thumbnailname);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      console.warn('File not found:', filename);
+    } else {
+      console.error('Error deleting file:', err);
+    }
+    return false;
+  }
+
   const [rows] = await promisePool.execute(
     'DELETE FROM wsk_cats WHERE cat_id = ?',
     [id]
   );
   console.log('rows', rows);
+
   if (rows.affectedRows === 0) {
     return false;
   }
