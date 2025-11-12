@@ -34,9 +34,12 @@ const listAllCats = async () => {
   return rows;
 };
 
-const findCatById = async (id) => {
-  const [rows] = await promisePool.execute(
-    `
+const findCatById = async (id, ownerId = false) => {
+  let sql = '';
+  if (ownerId) {
+    sql = `SELECT * FROM wsk_cats WHERE cat_id = ?`;
+  } else {
+    sql = `
     SELECT
     wsk_cats.cat_id, 
     wsk_cats.cat_name, 
@@ -46,9 +49,9 @@ const findCatById = async (id) => {
     wsk_cats.birthdate
     FROM wsk_cats
     JOIN wsk_users ON wsk_cats.owner = wsk_users.user_id
-    WHERE cat_id = ?`,
-    [id]
-  );
+    WHERE cat_id = ?`;
+  }
+  const [rows] = await promisePool.execute(sql, [id]);
   console.log('rows', rows);
 
   if (rows.length === 0) {

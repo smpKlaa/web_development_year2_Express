@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import {
   listAllUsers,
   findUserById,
@@ -23,6 +24,10 @@ const getUserById = async (req, res) => {
 
 const postUser = async (req, res) => {
   console.log('POST user.', req.body);
+
+  // Hash user password
+  req.body.password = bcrypt.hashSync(req.body.password, 10);
+
   const result = await addUser(req.body);
   if (result) {
     res.status(201);
