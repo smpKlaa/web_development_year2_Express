@@ -34,7 +34,7 @@ catRouter
   .get(getCats)
   .post(
     authenticateToken,
-    upload.single('photo'),
+    upload.single('file'),
     authorizeCatOwner,
     saveImageToDisk,
     createThumbnail,
@@ -45,7 +45,7 @@ catRouter
   .get(getCatById)
   .put(
     authenticateToken,
-    upload.single('photo'),
+    upload.single('file'),
     authorizeCatOwner,
     saveImageToDisk,
     createThumbnail,
