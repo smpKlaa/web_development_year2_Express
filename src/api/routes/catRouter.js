@@ -45,10 +45,10 @@ catRouter
     body('cat_name')
       .trim()
       .notEmpty()
-      .isLength({min: 2, max: 30})
+      .isLength({min: 3, max: 50})
       .isAlphanumeric(),
     body('weight').trim().notEmpty().isNumeric(),
-    body('owner').trim().notEmpty().isNumeric(),
+    body('owner').trim().notEmpty().isInt(),
     body('birthdate')
       .isDate()
       .withMessage('must be valid date format(YYYY-MM-DDTHH:mm:ss.sssZ)'),
