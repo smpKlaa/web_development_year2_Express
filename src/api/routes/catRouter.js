@@ -16,6 +16,8 @@ import {
 } from '../controllers/catController.js';
 import {authenticateToken} from '../../middlewares/authentication.js';
 import {authorizeCatOwner} from '../../middlewares/authorizeCatOwner.js';
+import {validationErrors} from '../../middlewares/errorHandlers.js';
+import {body} from 'express-validator';
 
 const catRouter = express.Router();
 
@@ -40,6 +42,15 @@ catRouter
     authenticateToken,
     validateUpload.single('file'),
     authorizeCatOwner,
+    body('cat_name')
+      .trim()
+      .notEmpty()
+      .isLength({min: 2, max: 30})
+      .isAlphanumeric(),
+    body('weight').trim().notEmpty().isNumeric(),
+    body('owner').trim().notEmpty().isNumeric(),
+    body('birthdate').isDate(),
+    validationErrors,
     saveImageToDisk,
     createThumbnail,
     postCat
