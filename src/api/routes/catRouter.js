@@ -49,7 +49,9 @@ catRouter
       .isAlphanumeric(),
     body('weight').trim().notEmpty().isNumeric(),
     body('owner').trim().notEmpty().isNumeric(),
-    body('birthdate').isDate(),
+    body('birthdate')
+      .isDate()
+      .withMessage('must be valid date format(YYYY-MM-DDTHH:mm:ss.sssZ)'),
     validationErrors,
     saveImageToDisk,
     createThumbnail,

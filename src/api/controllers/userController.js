@@ -43,7 +43,6 @@ const postUser = async (req, res, next) => {
 
   // Hash user password
   req.body.password = bcrypt.hashSync(req.body.password, 10);
-
   // TODO: implement erppr handling for SQL errors.
   const result = await addUser(req.body);
 
