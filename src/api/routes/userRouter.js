@@ -19,7 +19,7 @@ userRouter
   .route('/')
   .get(getUsers)
   .post(
-    body('name').trim().notEmpty().isLength({min: 2, max: 50}).isAlphanumeric(),
+    body('name').trim().notEmpty().isLength({min: 2, max: 50}).isAlpha(),
     body('username')
       .trim()
       .notEmpty()
