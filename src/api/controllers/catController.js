@@ -22,17 +22,28 @@ const getCats = async (req, res) => {
 const getCatById = async (req, res) => {
   console.log('GET cat by id.');
   const result = await findCatById(req.params.id);
+  console.log(result);
 
+  if (!result) {
+    const error = new Error('Not found');
+    error.status = 404;
+    return next(error);
+  }
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json(serializeCat(result));
+  res.json(serializeCat(result));
 };
 
 const getCatByOwnerId = async (req, res) => {
   console.log('GET cat by owner id.');
   const result = await findCatsByOwnerId(req.params.ownerId);
 
+  if (!result) {
+    const error = new Error('Not found');
+    error.status = 404;
+    return next(error);
+  }
   if (result.error) {
     return next(new Error(result.error));
   }
@@ -55,6 +66,11 @@ const postCat = async (req, res) => {
     filename: req.file.filename,
     birthdate: birthdate,
   });
+  if (!result) {
+    const error = new Error('Not found');
+    error.status = 404;
+    return next(error);
+  }
   if (result.error) {
     return nextTick(new Error(result.error));
   }
@@ -68,13 +84,15 @@ const putCat = async (req, res) => {
   //   const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
   //   req.body.filename = filePath;
   // }
+  if (req.file) {
+    req.body.filename = req.file.filename;
+  }
   const result = await replaceCat(req.params.id, req.body);
 
   if (result) {
     res.status(200).json({message: 'Cat item updated.', result});
   } else {
-    const result = addCat(req.body);
-
+    const result = await addCat(req.body);
     if (result.error) {
       return next(new Error(result.error));
     }
@@ -86,6 +104,11 @@ const deleteCat = async (req, res) => {
   console.log('DELETE cat.');
   const result = await removeCat(req.params.id);
 
+  if (!result) {
+    const error = new Error('Not found');
+    error.status = 404;
+    return next(error);
+  }
   if (result.error) {
     return next(new Error(result.error));
   }

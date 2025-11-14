@@ -1,7 +1,11 @@
 import express from 'express';
-import multer from 'multer';
+// import multer from 'multer';
 // import path from 'path';
-import {createThumbnail, saveImageToDisk} from '../../middlewares/upload.js';
+import {
+  validateUpload,
+  createThumbnail,
+  saveImageToDisk,
+} from '../../middlewares/upload.js';
 import {
   getCats,
   getCatById,
@@ -15,7 +19,7 @@ import {authorizeCatOwner} from '../../middlewares/authorizeCatOwner.js';
 
 const catRouter = express.Router();
 
-const storage = multer.memoryStorage();
+// const storage = multer.memoryStorage();
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, 'uploads/');
@@ -27,14 +31,14 @@ const storage = multer.memoryStorage();
 //   },
 // });
 
-const upload = multer({storage});
+// const upload = multer({storage});
 
 catRouter
   .route('/')
   .get(getCats)
   .post(
     authenticateToken,
-    upload.single('file'),
+    validateUpload.single('file'),
     authorizeCatOwner,
     saveImageToDisk,
     createThumbnail,
@@ -45,7 +49,7 @@ catRouter
   .get(getCatById)
   .put(
     authenticateToken,
-    upload.single('file'),
+    validateUpload.single('file'),
     authorizeCatOwner,
     saveImageToDisk,
     createThumbnail,

@@ -25,14 +25,16 @@ const validateUpload = multer({
 });
 
 const saveImageToDisk = async (req, res, next) => {
-  if (!req.file) {
-    console.log('SAVETODISKERROR');
-    const error = new Error('Invalid or missing file');
-    error.status = 400;
-
-    return next(error);
+  if (req.method === 'POST') {
+    if (!req.file) {
+      const error = new Error('Invalid or missing file');
+      error.status = 400;
+      return next(error);
+    }
   }
-
+  if (req.method === 'PUT' && !req.file) {
+    return next();
+  }
   const ext = path.extname(req.file.originalname);
   const name = path.basename(req.file.originalname, ext);
   const filename = `${name}-${Date.now()}${ext}`;
@@ -49,11 +51,15 @@ const saveImageToDisk = async (req, res, next) => {
 };
 
 const createThumbnail = async (req, res, next) => {
-  if (!req.file.buffer) {
-    const error = new Error('Invalid or missing file');
-    error.status = 400;
-    next(error);
-    return;
+  if (req.method === 'POST') {
+    if (!req.file.buffer) {
+      const error = new Error('Invalid or missing file');
+      error.status = 400;
+      return next(error);
+    }
+  }
+  if (req.method === 'PUT' && !req.file) {
+    return next();
   }
 
   await sharp(req.file.buffer)
