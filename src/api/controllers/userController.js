@@ -8,26 +8,26 @@ import {
 } from '../models/userModel.js';
 // import {validationResult} from 'express-validator';
 
-const getUsers = async (req, res) => {
+const getUsers = async (req, res, next) => {
   console.log('GET all users.');
   const result = await listAllUsers();
 
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json(result);
+  res.status(200).json(result);
 };
 
-const getUserById = async (req, res) => {
+const getUserById = async (req, res, next) => {
   console.log('GET user by id.');
   const result = await findUserById(req.params.id);
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json(result);
+  res.status(200).json(result);
 };
 
-const postUser = async (req, res) => {
+const postUser = async (req, res, next) => {
   console.log('POST user.', req.body);
 
   // TODO: implement this
@@ -50,10 +50,10 @@ const postUser = async (req, res) => {
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json({message: 'New user added.', result});
+  res.status(200).json({message: 'New user added.', result});
 };
 
-const putUser = async (req, res) => {
+const putUser = async (req, res, next) => {
   console.log('PUT user.');
   const result = await replaceUser(req.params.id, req.body);
   if (result) {
@@ -69,14 +69,14 @@ const putUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   console.log('DELETE user');
   const result = await removeUser(req.params.id);
 
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json({message: 'User item deleted.', result});
+  res.status(200).json({message: 'User item deleted.', result});
 };
 
 export {getUsers, getUserById, postUser, putUser, deleteUser};

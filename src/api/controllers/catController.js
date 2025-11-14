@@ -16,7 +16,7 @@ const getCats = async (req, res, next) => {
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.json(result.map(serializeCat));
+  res.status(200).json(result.map(serializeCat));
 };
 
 const getCatById = async (req, res, next) => {
@@ -32,7 +32,7 @@ const getCatById = async (req, res, next) => {
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.json(serializeCat(result));
+  res.status(200).json(serializeCat(result));
 };
 
 const getCatByOwnerId = async (req, res, next) => {
@@ -47,7 +47,7 @@ const getCatByOwnerId = async (req, res, next) => {
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.json(serializeCat(result));
+  res.status(200).json(serializeCat(result));
 };
 
 const postCat = async (req, res, next) => {
@@ -112,7 +112,7 @@ const deleteCat = async (req, res, next) => {
   if (result.error) {
     return next(new Error(result.error));
   }
-  res.sendStatus(200).json({message: 'Cat item deleted.', result});
+  res.status(200).json({message: 'Cat item deleted.', result});
 };
 
 function getCatImageUrl(filename) {
