@@ -11,28 +11,32 @@ import process from 'process';
 
 const getCats = async (req, res) => {
   console.log('GET all cats.');
-  const cats = await listAllCats();
-  res.json(cats.map(serializeCat));
+  const result = await listAllCats();
+
+  if (result.error) {
+    return next(new Error(result.error));
+  }
+  res.json(result.map(serializeCat));
 };
 
 const getCatById = async (req, res) => {
   console.log('GET cat by id.');
-  const cat = await findCatById(req.params.id);
-  if (cat) {
-    res.json(serializeCat(cat));
-  } else {
-    res.sendStatus(404);
+  const result = await findCatById(req.params.id);
+
+  if (result.error) {
+    return next(new Error(result.error));
   }
+  res.sendStatus(200).json(serializeCat(result));
 };
 
 const getCatByOwnerId = async (req, res) => {
   console.log('GET cat by owner id.');
-  const cat = await findCatsByOwnerId(req.params.ownerId);
-  if (cat) {
-    res.json(serializeCat(cat));
-  } else {
-    res.sendStatus(404);
+  const result = await findCatsByOwnerId(req.params.ownerId);
+
+  if (result.error) {
+    return next(new Error(result.error));
   }
+  res.json(serializeCat(result));
 };
 
 const postCat = async (req, res) => {
@@ -51,13 +55,11 @@ const postCat = async (req, res) => {
     filename: req.file.filename,
     birthdate: birthdate,
   });
-
-  if (result) {
-    res.status(201);
-    res.json({message: 'New cat added.', result});
-  } else {
-    res.sendStatus(400);
+  if (result.error) {
+    return nextTick(new Error(result.error));
   }
+
+  res.status(201).json({message: 'New cat added.', result});
 };
 
 const putCat = async (req, res) => {
@@ -67,32 +69,32 @@ const putCat = async (req, res) => {
   //   req.body.filename = filePath;
   // }
   const result = await replaceCat(req.params.id, req.body);
+
   if (result) {
-    res.status(200);
-    res.json({message: 'Cat item updated.', result});
+    res.status(200).json({message: 'Cat item updated.', result});
   } else {
     const result = addCat(req.body);
-    res.status(201);
-    res.json({message: 'New cat added.', result});
+
+    if (result.error) {
+      return next(new Error(result.error));
+    }
+    res.status(201).json({message: 'New cat added.', result});
   }
 };
 
 const deleteCat = async (req, res) => {
   console.log('DELETE cat.');
   const result = await removeCat(req.params.id);
-  if (result) {
-    res.status(200);
-    res.json({message: 'Cat item deleted.', result});
-  } else {
-    res.sendStatus(404);
+
+  if (result.error) {
+    return next(new Error(result.error));
   }
+  res.sendStatus(200).json({message: 'Cat item deleted.', result});
 };
 
 function getCatImageUrl(filename) {
   if (!filename) return null;
-
   const url = `http://${process.env.DOMAIN}/uploads/${filename}`;
-
   return url;
 }
 
