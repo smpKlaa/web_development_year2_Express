@@ -9,7 +9,7 @@ import {
 import 'dotenv/config.js';
 import process from 'process';
 
-const getCats = async (req, res) => {
+const getCats = async (req, res, next) => {
   console.log('GET all cats.');
   const result = await listAllCats();
 
@@ -19,7 +19,7 @@ const getCats = async (req, res) => {
   res.json(result.map(serializeCat));
 };
 
-const getCatById = async (req, res) => {
+const getCatById = async (req, res, next) => {
   console.log('GET cat by id.');
   const result = await findCatById(req.params.id);
   console.log(result);
@@ -35,7 +35,7 @@ const getCatById = async (req, res) => {
   res.json(serializeCat(result));
 };
 
-const getCatByOwnerId = async (req, res) => {
+const getCatByOwnerId = async (req, res, next) => {
   console.log('GET cat by owner id.');
   const result = await findCatsByOwnerId(req.params.ownerId);
 
@@ -50,7 +50,7 @@ const getCatByOwnerId = async (req, res) => {
   res.json(serializeCat(result));
 };
 
-const postCat = async (req, res) => {
+const postCat = async (req, res, next) => {
   console.log('POST cat.');
 
   console.log('Request form data: ', req.body);
@@ -78,7 +78,7 @@ const postCat = async (req, res) => {
   res.status(201).json({message: 'New cat added.', result});
 };
 
-const putCat = async (req, res) => {
+const putCat = async (req, res, next) => {
   console.log('PUT cat.');
   // if (req.file) {
   //   const filePath = `http://${req.get('host')}/uploads/${req.file.filename}`;
@@ -100,7 +100,7 @@ const putCat = async (req, res) => {
   }
 };
 
-const deleteCat = async (req, res) => {
+const deleteCat = async (req, res, next) => {
   console.log('DELETE cat.');
   const result = await removeCat(req.params.id);
 
