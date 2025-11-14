@@ -56,6 +56,6 @@ catRouter
     putCat
   )
   .delete(authenticateToken, authorizeCatOwner, deleteCat);
-catRouter.route('/:ownerId').get(getCatByOwnerId);
+catRouter.route('/catsof/:ownerId').get(getCatByOwnerId);
 
 export default catRouter;
